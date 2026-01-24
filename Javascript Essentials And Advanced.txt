@@ -1,0 +1,259 @@
+Question 1: What is JavaScript? Explain the role of JavaScript in web development.
+Ans:
+JavaScript is a high-level, interpreted programming language mainly used to create interactive and dynamic web pages. It runs directly in the user’s web browser
+
+HTML → structure
+CSS → styling
+JavaScript → behavior & interactivity
+
+2)How is JavaScript different from other programming languages like Python or Java?
+Ans:
+JavaScript is mainly used for client-side web development, while Python and Java are often used for backend, desktop, or enterprise applications.
+
+3)Discuss the use of <script> tag in HTML. How can you link an external JavaScript file to an HTML document?
+Ans:
+The <script> tag is used to embed or link JavaScript code inside an HTML document.
+ex:<script src="script.js"></script>
+
+******************************************************************
+1)Create a simple HTML page with alert message.
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Alert Example</title>
+</head>
+<body>
+
+    <h1>JavaScript Demo</h1>
+
+    <script>
+        alert("Welcome to JavaScript!");
+    </script>
+
+</body>
+</html>
+
+******************************************************************
+
+Question 1: What are variables in JavaScript? How do you declare a variable using var, let, and const?
+Ans:
+Variables in JavaScript are used to store data values that can be used and manipulated in a program.
+JavaScript provides three ways to declare variables:
+
+1. var
+Function-scoped
+Can be re-declared and updated
+var age = 20;
+
+2. let
+Block-scoped
+Can be updated but not re-declared in the same scope
+let name = "John";
+
+3. const
+Block-scoped
+Cannot be re-declared or updated
+Used for constant values
+
+Question 2: Explain the different data types in JavaScript. Provide examples for each.
+Ans:
+Primitive datatypes:
+	String	
+	Number	
+	Boolean	
+	Undefined	
+	Null	
+	Symbol
+Non-primitive datatypes:
+	Object
+	Array
+	Function
+
+Question 3:What is the difference between undefined and null in JavaScript?
+Ans:
+null → I know this variable has no value
+undefined → The variable exists, but no value is given yet
+
+******************************************************************
+o Write a JavaScript program to declare variables for different data types (string, number, boolean, null, and undefined).
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Data Types</title>
+</head>
+<body>
+
+    <h2>JavaScript Data Types Example</h2>
+
+    <script>
+        let name = "Rahul";        // String
+        let age = 21;             // Number
+        let isStudent = true;     // Boolean
+        let result = null;        // Null
+        let grade;                // Undefined
+
+        console.log(name, typeof name);
+        console.log(age, typeof age);
+        console.log(isStudent, typeof isStudent);
+        console.log(result, typeof result);
+        console.log(grade, typeof grade);
+    </script>
+
+</body>
+</html>
+
+o Log the values of the variables and their types to the console using console.log()
+
+let name = "Rahul";        // String
+let age = 21;             // Number
+let isStudent = true;     // Boolean
+let result = null;        // Null
+let grade;                // Undefined
+
+console.log("Name:", name, "| Type:", typeof name);
+console.log("Age:", age, "| Type:", typeof age);
+console.log("Is Student:", isStudent, "| Type:", typeof isStudent);
+console.log("Result:", result, "| Type:", typeof result);
+console.log("Grade:", grade, "| Type:", typeof grade);
+***************************************************************************************
+Question 2: What is the difference between == and === in JavaScript?
+Ans:
+= Compares values only
+==Compares value and data type
+
+
+*********************************************************************************
+JavaScript operatot
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Operators Lab</title>
+</head>
+<body>
+
+    <h2>JavaScript Operators Example</h2>
+
+    <script>
+        // Declare two numbers
+        let a = 20;
+        let b = 4;
+
+        // Arithmetic Operators
+        console.log("Addition:", a + b);
+        console.log("Subtraction:", a - b);
+        console.log("Multiplication:", a * b);
+        console.log("Division:", a / b);
+
+        // Comparison Operators
+        console.log("a == b:", a == b);
+        console.log("a === b:", a === b);
+        console.log("a > b:", a > b);
+
+        // Logical Operators
+        console.log("a > 10 && b < 5:", a > 10 && b < 5);
+    </script>
+
+</body>
+</html>
+
+Use comparison operators to check if two numbers are equal and if one
+number is greater than the other.
+
+let a = 10;
+let b = 20;
+
+// Check if both numbers are equal
+console.log("a == b:", a == b);
+
+// Check if a is greater than b
+console.log("a > b:", a > b);
+
+***************************************************************************************
+
+4. Control Flow (If-Else, Switch)
+
+
+Write a JavaScript program to check if a number is positive, negative, or zero using
+an if-else statement.
+
+let num = 5;
+
+if (num > 0) {
+    console.log("The number is Positive");
+} else if (num < 0) {
+    console.log("The number is Negative");
+} else {
+    console.log("The number is Zero");
+}
+
+
+o Create a JavaScript program using a switch statement to display the day of the week
+based on the user input (e.g., 1 for Monday, 2 for Tuesday, etc.).
+
+// Example: user input
+let dayNumber = 3;
+
+switch(dayNumber) {
+    case 1:
+        console.log("Monday");
+        break;
+    case 2:
+        console.log("Tuesday");
+        break;
+    case 3:
+        console.log("Wednesday");
+        break;
+    case 4:
+        console.log("Thursday");
+        break;
+    case 5:
+        console.log("Friday");
+        break;
+    case 6:
+        console.log("Saturday");
+        break;
+    case 7:
+        console.log("Sunday");
+        break;
+    default:
+        console.log("Invalid input! Please enter a number between 1 and 7.");
+}
+
+***************************************************************************
+5.FUNCTIONS
+
+Write a function greetUser that accepts a user’s name as a parameter and displays
+agreeting message (e.g., "Hello, John!").
+
+// Function to greet the user
+function greetUser(name) {
+    console.log("Hello, " + name + "!");
+}
+
+// Calling the function
+greetUser("John");  // Output: Hello, John!
+greetUser("Alice"); // Output: Hello, Alice!
+
+**********************************************************************
+
+7. Arrays
+
+o Write a program to find the sum of all elements in an array of numbers
+
+let numbers = [10, 20, 30, 40, 50];
+let sum = 0;
+for (let i = 0; i < numbers.length; i++) {
+    sum += numbers[i];
+}
+console.log("The sum of all elements is:", sum);
+
+
+
+
+
+
+
+
+
