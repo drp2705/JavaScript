@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Bio Link Builder</title>
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.825rem;
+            margin-top: 0.35rem;
+            display: none;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Preview Area Styling */
+        .preview-phone {
+            border: 12px solid #111827;
+            border-radius: 36px;
+            padding: 2rem 1rem;
+            min-height: 450px;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .profile-handle {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .links-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .creator-link {
+            flex-grow: 1;
+            display: block;
+            text-align: center;
+            background-color: white;
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .creator-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .btn-delete {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.85rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .empty-state {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Section 1 & 2: Form Input & Validation Container -->
+    <div class="card">
+        <h2>Add Custom Link</h2>
+        <form id="link-form" novalidate>
+            <div class="form-group">
+                <label for="link-title">Link Title</label>
+                <input type="text" id="link-title" placeholder="e.g., My Portfolio" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="link-url">URL</label>
+                <input type="url" id="link-url" placeholder="https://example.com" required>
+                <div id="url-error" class="error-message">Please enter a valid URL containing https://</div>
+            </div>
+            
+            <button type="submit" class="btn">Add Link</button>
+        </form>
+    </div>
+
+    <!-- Section 3 & 5: Profile Preview & Delete Action Container -->
+    <div class="card">
+        <h2>Live Preview</h2>
+        <div class="preview-phone">
+            <div class="profile-avatar"></div>
+            <div class="profile-handle">@creative_mind</div>
+            
+            <div id="links-container" class="links-container">
+                <!-- Dynamically generated link buttons will append here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Application State Engine
+    // Section 4: Initializing state by loading parsed items from local storage
+    let links = JSON.parse(localStorage.getItem('creator_links')) || [];
+
+    // DOM Elements References
+    const linkForm = document.getElementById('link-form');
+    const linkTitleInput = document.getElementById('link-title');
+    const linkUrlInput = document.getElementById('link-url');
+    const urlError = document.getElementById('url-error');
+    const linksContainer = document.getElementById('links-container');
+
+    /**
+     * Section 2: Validation Check logic
+     * Verifies that the string is structurally valid and forces the use of HTTPS
+     */
+    function isValidHttpsUrl(string) {
+        try {
+            const url = new URL(string);
+            return url.protocol === "https:";
+        } catch (_) {
+            return false;  
+        }
+    }
+
+    /**
+     * Section 3 & 5: Dynamic List Rendering & Component Building
+     * Employs Template Literals to iteratively generate markup templates safely matching state updates
+     */
+    function renderLinks() {
+        // Clear old rendered nodes to avoid duplication artifacts
+        linksContainer.innerHTML = '';
+
+        if (links.length === 0) {
+            linksContainer.innerHTML = '<div class="empty-state">No links added yet. Your profile layout is empty.</div>';
+            return;
+        }
+
+        // Loop over state array constructing template items
+        links.forEach((link, index) => {
+            const linkItem = document.createElement('div');
+            linkItem.className = 'link-item';
+            
+            // Build modern button layout string injecting explicit array markers
+            linkItem.innerHTML = `
+                <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="creator-link">
+                    ${escapeHTML(link.title)}
+                </a>
+                <button class="btn-delete" data-index="${index}" title="Remove link">Remove</button>
+            `;
+            
+            linksContainer.appendChild(linkItem);
+        });
+    }
+
+    /**
+     * Section 4: LocalStorage Synchronizer Utility
+     */
+    function syncStorageAndRender() {
+        localStorage.setItem('creator_links', JSON.stringify(links));
+        renderLinks();
+    }
+
+    /**
+     * Section 1 & 2: Handling Form Submission Event context
+     */
+    linkForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Halt default HTTP submission reloads
+        
+        const title = linkTitleInput.value.trim();
+        const url = linkUrlInput.value.trim();
+
+        // Perform programmatic verification checks 
+        if (!isValidHttpsUrl(url)) {
+            urlError.style.display = 'block';
+            linkUrlInput.style.borderColor = 'var(--danger)';
+            return;
+        }
+
+        // Hide validation messages on successful validation path pass
+        urlError.style.display = 'none';
+        linkUrlInput.style.borderColor = 'var(--border)';
+
+        // Object generation matching array structure expectations
+        const newLink = { title, url };
+        links.push(newLink);
+
+        // Sync to store & render updates
+        syncStorageAndRender();
+
+        // Clear native fields resetting clean operational context
+        linkForm.reset();
+        linkTitleInput.focus();
+    });
+
+    /**
+     * Section 5: High Efficiency Event Delegation
+     * Direct single element interception boundary instead of assigning single listeners inside rendering loops
+     */
+    linksContainer.addEventListener('click', function(event) {
+        // Intercept triggers bubbles checking for deletion target classes 
+        if (event.target.classList.contains('btn-delete')) {
+            const targetIndex = parseInt(event.target.getAttribute('data-index'), 10);
+            
+            // Splice array entry targeting explicit indices
+            links.splice(targetIndex, 1);
+            
+            // Refresh permanent browser store profiles instantly
+            syncStorageAndRender();
+        }
+    });
+
+    /**
+     * Helper mapping sanitizer protecting template runtime updates against simple XSS inputs
+     */
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    // Initialize View Layer components cleanly on initial compilation threads
+    renderLinks();
+</script>
+
+</body>
+</html>
