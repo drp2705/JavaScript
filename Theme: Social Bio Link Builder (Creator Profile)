@@ -1,0 +1,86 @@
+Theme: Social Bio Link Builder (Creator Profile)
+
+Section A: Concept Application
+
+
+1. Dynamic UI Population: JS Execution, Scoping, & DOM Selection
+To render a creator's profile dynamically after the page loads, three core parts of JavaScript work in tandem:
+
+JavaScript Execution: The browser reads your script sequentially. When fetching creator data from an API, asynchronous JavaScript ensures the page structure (HTML/CSS) loads first, and the profile details fill in the moment the data arrives.
+
+Variable Scoping (let vs. const):
+
+Use const for variables that point to fixed elements or data structures, such as a reference to the profile image container or the immutable user object fetched from the server. This prevents accidental reassignments.
+
+Use let for values that naturally change over time, like tracking the total number of profile views or a temporary state variable during a theme toggle.
+
+DOM Selection: Using modern selection methods like document.querySelector() or document.getElementById(), JavaScript targets specific HTML "anchors" (e.g., #profile-name, #bio). Once selected, properties like .textContent or .src are updated with the variable data to display it to the user.
+
+2. The "Verified Creator" Badge: Logic & Manipulation
+Automatically rendering a verification badge relies on evaluated states and structural updates:
+
+Conditional Logic & Thresholds: A simple configuration sets the rule: const IS_VERIFIED = followerCount >= 100000;. An if/else block checks this condition whenever the data changes.
+
+Truthy vs. Falsy: JavaScript evaluates values implicitly in conditions. If a user’s badgeColor or custom badgeIcon string is empty (""), it evaluates as falsy. If it contains a value (e.g., "blue-badge"), it is truthy. This allows for clean fallback logic if a badge exists but lacks custom styling.
+
+DOM Manipulation: If the condition is met, JavaScript dynamically modifies the page structure. It will either inject the badge element using .appendChild(), reveal a hidden element by altering its CSS classes via .classList.remove('hidden'), or entirely wipe it out with .remove() if the count falls below the threshold.
+
+3. Rendering Multi-Link Lists: Arrays, Loops, & Templates
+Creators need to showcase multiple platforms. Managing this data cleanly requires structured arrays and expressive rendering:
+
+Arrays of Objects: The links are stored as a structured dataset where each link is an object containing metadata:
+
+JavaScript
+const socialLinks = [
+  { platform: "YouTube", url: "https://...", icon: "video.svg" },
+  { platform: "Twitter", url: "https://...", icon: "bird.svg" }
+];
+
+*   **Loops:** Instead of hardcoding HTML for each platform, JavaScript iterates over the array using high-order array methods like .forEach() or .map(). This ensures that whether a creator has 2 links or 20, the exact same rendering logic applies.
+*   **Template Literals:** Inside the loop, template literals (strings wrapped in backticks    that allow embedded variables using ${}) construct the HTML block cleanly:
+    ```javascript
+    const linkHTML = `
+      <a href="${link.url}" class="link-card">
+        <img src="${link.icon}" alt="${link.platform}" />
+        <span>${link.platform}</span>
+      </a>
+    `;
+    
+These strings are then injected into a single wrapper element in the DOM.
+4. Data Persistence: LocalStorage, JSON, & Sync Issues
+To keep links on the page after a user hits refresh, data must move between temporary runtime memory and permanent browser storage:
+
+LocalStorage: A built-in web storage API that holds data directly in the user's browser with no expiration date.
+
+JSON Conversion: LocalStorage can only store strings. Because your links live as a rich JavaScript array of objects, you must serialize them into a string using JSON.stringify(linksArray) before saving. When restoring the page, JSON.parse(savedString) converts that string back into an actionable JavaScript array.
+
+The Cost of a Missed Sync: If you update the UI (adding or deleting a link card) but forget to update LocalStorage, a state desynchronization occurs. The app will look correct temporarily, but the moment the user refreshes or navigates away, all recent edits vanish, reverting the profile back to its last saved state.
+
+5. Instant Deletion: Event Handling & Event Delegation
+When a user clicks a delete button, the app needs to react immediately without a jarring page reload:
+
+Event Handling: JavaScript listens for user interactions (like a 'click') via addEventListener(). When triggered, it intercepts the default browser behavior, targets the specific link, updates the underlying data array, and drops the corresponding HTML node from the DOM.
+
+Event Delegation: If a creator has dozens of links, attaching an individual event listener to every single delete icon wastes memory and breaks down when new links are dynamically added later.
+Instead, you attach one single listener to the parent container (#links-wrapper). When any delete icon is clicked, the event "bubbles up" to the parent. The parent inspects the event target (e.target) to see if it matches a delete icon, identifies which link it belongs to (often via a custom data-id attribute), and removes it safely.
+
+6. Code Architecture: Modular JavaScript (Imports/Exports)
+Monolithic files quickly become unreadable messes of event listeners, API calls, and HTML string builders. Breaking the app into modules solves this:
+
+Separation of Concerns: You split your application logic into dedicated files based on their exact job:
+
+storage.js: Handles all LocalStorage reading, writing, and JSON parsing.
+
+ui.js: Handles DOM selection, template rendering, and badge toggling.
+
+app.js: The central orchestrator that imports the other files and initializes the application.
+
+Imports and Exports: By using export const saveLinks = ... in your storage file, you explicitly expose that capability. In your main application file, you fetch it using import { saveLinks } from './storage.js';.
+
+Maintainability and Scalability: If a bug pops up with data persistence, you know exactly which small file to open without hunting through thousands of lines of UI code. It also allows multiple developers to work on features simultaneously without stepping on each other's toes or causing code conflicts.
+
+
+Section B: Mini Tasks - Social Bio Link Builder
+
+Task: Creator Profile Link Manager
+
