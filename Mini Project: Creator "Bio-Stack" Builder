@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Stack // Creator Profile Builder</title>
+    <style>
+        /* -------------------------------------------------------------
+           CSS VARIABLES & CUSTOM THEME ENGINE
+        ------------------------------------------------------------- */
+        :root {
+            /* Light Theme Palette */
+            --bg-main: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --phone-shell: #0f172a;
+            --phone-screen: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Palette */
+            --bg-main: #090d16;
+            --bg-surface: #131a26;
+            --border-color: #242f41;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --danger: #f87171;
+            --danger-bg: #2d1919;
+            --phone-shell: #1e293b;
+            --phone-screen: #0b0f17;
+        }
+
+        /* -------------------------------------------------------------
+           BASE SYSTEM STYLES
+        ------------------------------------------------------------- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: var(--transition);
+            min-height: 100vh;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto 2rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        /* Theme Toggle Mechanism */
+        .theme-toggle-btn {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--primary);
+        }
+
+        /* -------------------------------------------------------------
+           APPLICATION WORKSPACE LAYOUT
+        ------------------------------------------------------------- */
+        .workspace {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        /* Responsive Breakpoint for Dual-Pane Layout */
+        @media (min-width: 992px) {
+            .workspace {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+
+        .panel-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        /* Form Sub-systems */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .error-container {
+            color: var(--danger);
+            background-color: var(--danger-bg);
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+            display: none;
+            border-left: 4px solid var(--danger);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Managed Dashboard List View */
+        .dashboard-list-header {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dashboard-links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .dashboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            gap: 1rem;
+        }
+
+        .dashboard-item-info {
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .dashboard-item-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dashboard-item-url {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-delete {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.825rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* -------------------------------------------------------------
+           MOBILE-FIRST LIVE PROFILE PREVIEW
+        ------------------------------------------------------------- */
+        .preview-panel {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* High Fidelity Phone Shell */
+        .phone-wrapper {
+            width: 100%;
+            max-width: 340px;
+            border: 10px solid var(--phone-shell);
+            border-radius: 40px;
+            background-color: var(--phone-screen);
+            min-height: 560px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        /* Camera Notch Element simulation */
+        .phone-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 18px;
+            background-color: var(--phone-shell);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .phone-contents {
+            padding: 2.5rem 1.25rem 1.5rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            flex-grow: 1;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .handle {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .preview-links-stack {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        /* Interactive Preview Buttons */
+        .preview-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 0.85rem 1rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: var(--transition);
+        }
+
+        .preview-btn:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-empty-state {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 3rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Platform Header & Navigation Infrastructure -->
+    <header>
+        <div class="brand">
+            <h1>Bio<span>Stack</span></h1>
+        </div>
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle structural layout visual palette theme">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark Mode</span>
+        </button>
+    </header>
+
+    <!-- Unified Dashboard Workspace Configuration -->
+    <main class="workspace">
+        
+        <!-- Left Side Controller Panel: Creation Engine and Storage Controls -->
+        <section class="panel-card">
+            <h2>Link Management Dashboard</h2>
+            
+            <div id="validation-error-fallback" class="error-container"></div>
+
+            <form id="stack-form" novalidate>
+                <div class="form-group">
+                    <label for="input-title">Link Button Display Title</label>
+                    <input type="text" id="input-title" placeholder="e.g., Follow my Official Twitch channel" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-url">Destination Address URL</label>
+                    <input type="url" id="input-url" placeholder="https://twitch.tv/username" required>
+                </div>
+                <button type="submit" class="btn-submit">Add Link to Stack</button>
+            </form>
+
+            <div class="dashboard-list-header">Active Stack Elements</div>
+            <div id="dashboard-links-view" class="dashboard-links-container">
+                <!-- Administrative tracking instances injected here -->
+            </div>
+        </section>
+
+        <!-- Right Side Panel: Mobile-First Canvas Mirror Layout Viewport -->
+        <section class="preview-panel">
+            <div class="phone-wrapper">
+                <div class="phone-contents">
+                    <div class="avatar"></div>
+                    <div class="handle">@digital_creator</div>
+                    <div class="bio">Welcome to my portal. Click any element below to explore my ecosystem and projects!</div>
+                    
+                    <div id="preview-links-view" class="preview-links-stack">
+                        <!-- Clickable link badges generated dynamically here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- -----------------------------------------------------------------
+         BUSINESS ENGINE CORE COMPILATION RUNTIME
+    ------------------------------------------------------------------ -->
+    <script>
+        // 1. STATE INITIALIZATION ENGINE
+        let linksState = JSON.parse(localStorage.getItem('biostack_links')) || [];
+        let currentTheme = localStorage.getItem('biostack_theme') || 'light';
+
+        // 2. ELEMENT CACHE MAP LAYOUTS
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        
+        const stackForm = document.getElementById('stack-form');
+        const inputTitle = document.getElementById('input-title');
+        const inputUrl = document.getElementById('input-url');
+        const errorContainer = document.getElementById('validation-error-fallback');
+        
+        const dashboardLinksView = document.getElementById('dashboard-links-view');
+        const previewLinksView = document.getElementById('preview-links-view');
+
+        // 3. THEME MANAGEMENT SYSTEM
+        function applyTheme(themeMode, isInitialLoad = false) {
+            document.documentElement.setAttribute('data-theme', themeMode);
+            localStorage.setItem('biostack_theme', themeMode);
+            currentTheme = themeMode;
+
+            if (themeMode === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(nextTheme);
+        });
+
+        // 4. SANITIZATION LAYER (XSS Prevention)
+        function escapeString(unsafeText) {
+            return unsafeText
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 5. VALIDATION UTILITY CORE
+        function validateInputs(title, url) {
+            if (!title || !url) {
+                return "Submission rejected. Both fields are required and cannot be left blank.";
+            }
+
+            try {
+                const checkedUrl = new URL(url);
+                if (checkedUrl.protocol !== "http:" && checkedUrl.protocol !== "https:") {
+                    return "Invalid standard configuration protocol. Links must belong to http:// or https:// formats.";
+                }
+            } catch (err) {
+                return "The destination address provided does not match structural URL validation rules. Verify spelling.";
+            }
+
+            return null; // Passes all validation gates cleanly
+        }
+
+        // 6. SYNCHRONIZED ARCHITECTURE RENDERING LOGIC
+        function syncUIAndStorage() {
+            // Write local state modification states down to persistence layer instantly
+            localStorage.setItem('biostack_links', JSON.stringify(linksState));
+
+            // Flush out rendering containers to build up from a clean slate
+            dashboardLinksView.innerHTML = '';
+            previewLinksView.innerHTML = '';
+
+            if (linksState.length === 0) {
+                const emptyDashboardMarkup = `<div class="preview-empty-state">No links have been committed to this workspace yet. Use the engine above to populate states.</div>`;
+                const emptyPreviewMarkup = `<div class="preview-empty-state">Your stack is looking barren! Link additions populate inside this view layout panel dynamically.</div>`;
+                
+                dashboardLinksView.innerHTML = emptyDashboardMarkup;
+                previewLinksView.innerHTML = emptyPreviewMarkup;
+                return;
+            }
+
+            // Loop and render data arrays across both views
+            linksState.forEach((link, index) => {
+                const safeTitle = escapeString(link.title);
+                const safeUrl = escapeString(link.url);
+
+                // Build administrative item component
+                const dashboardItem = document.createElement('div');
+                dashboardItem.className = 'dashboard-item';
+                dashboardItem.innerHTML = `
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-title">${safeTitle}</div>
+                        <div class="dashboard-item-url">${safeUrl}</div>
+                    </div>
+                    <button class="btn-delete" data-target-index="${index}">Remove</button>
+                `;
+                dashboardLinksView.appendChild(dashboardItem);
+
+                // Build modern interactive profile previews matching responsive trees
+                const previewAnchor = document.createElement('a');
+                previewAnchor.className = 'preview-btn';
+                previewAnchor.href = safeUrl;
+                previewAnchor.target = '_blank';
+                previewAnchor.rel = 'noopener noreferrer';
+                previewAnchor.textContent = safeTitle;
+                previewLinksView.appendChild(previewAnchor);
+            });
+        }
+
+        // 7. CONTROLLER SUBMISSION ROUTINES
+        stackForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const titleVal = inputTitle.value.trim();
+            const urlVal = inputUrl.value.trim();
+
+            // Intercept errors using validation tools
+            const validationError = validateInputs(titleVal, urlVal);
+            if (validationError) {
+                errorContainer.textContent = validationError;
+                errorContainer.style.display = 'block';
+                return;
+            }
+
+            // Hide validation error panels upon passing checks
+            errorContainer.style.display = 'none';
+
+            // Push object data arrays up to runtime storage models
+            linksState.push({ title: titleVal, url: urlVal });
+
+            // Refresh presentation views instantly
+            syncUIAndStorage();
+
+            // Clear operational fields smoothly
+            stackForm.reset();
+            inputTitle.focus();
+        });
+
+        // 8. HIGH EFFICIENCY ADMINISTRATIVE EVENT DELEGATION
+        dashboardLinksView.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-delete')) {
+                const extractTargetIdx = parseInt(e.target.getAttribute('data-target-index'), 10);
+                
+                // Mutate the local data array
+                linksState.splice(extractTargetIdx, 1);
+                
+                // Re-sync changes back down to storage layers and renderers
+                syncUIAndStorage();
+            }
+        });
+
+        // 9. INITIAL COMPILATION RUNS
+        applyTheme(currentTheme, true);
+        syncUIAndStorage();
+    </script>
+</body>
+</html>
